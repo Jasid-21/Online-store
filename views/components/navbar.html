@@ -1,0 +1,53 @@
+<style>
+    .profile-user-container{
+        display: flex;
+    }
+    .profile-img-container{
+        width: 50px;
+        height: 50px;
+        border: 2px solid black;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .username-container{
+        display: flex;
+        align-items: center;
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="border-bottom:2px solid gray;">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+            <h1 style="font-weight:700; font-style:italic;">OnlineSotre</h1>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="#">My articles</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="#">My buys</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight:bold; color:green;">
+                    Create!
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="/newArticle">Article Announcement</a></li>
+                        <li><a class="dropdown-item" href="#">Article required</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="profile-user-container">
+                <div class="profile-img-container"></div>
+                <div class="username-container">
+                    <p class="h6">Sefirot Hunter</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

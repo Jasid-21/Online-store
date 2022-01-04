@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include("components/header.html") %>
+        <link rel="stylesheet" href="css/newArticle.css">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Document</title>
+    </head>
+
+    <body>
+        <div id="masterContainer" class="container-fluid">
+            <%- include("components/navbar.html") %>
+
+            <div class="mainContent-container">
+                <div class="newArticle-container container">
+                    <div class="newArticle-img-container" style="position:relative;">
+                        <input type="file" class="newArticle-img-selector" hidden>
+                        <img class="newArticle-img" onclick="upload_img(this)"/>
+                    </div>
+                    <div class="newArticle_data-container container">
+                        <div class="row newArticle-row">
+                            <div class="newArticle_field-container col-12 col-md-6">
+                                <h6 class="newArticle-field-title">Article name:</h6>
+                                <input type="text" class="newArticle-name newArticle-field-value" placeholder="Article name" value="testing name">
+                            </div>
+                            <div class="newArticle_field-container col-12 col-md-6">
+                                <h6 class="newArticle-field-title">Author:</h6>
+                                <input type="text" class="newArticle-author newArticle-field-value" disabled value="SefirotHunter">
+                            </div>
+                        </div>
+                        <div class="row newArticle-row">
+                            <div class="newArticle_field-container col-12 col-md-6">
+                                <h6 class="newArticle-field-title">Price:</h6>
+                                <input type="text" class="newArticle-price newArticle-field-value" placeholder="Price" value="testing price">
+                            </div>
+                            <div class="newArticle_field-container col-12 col-md-6">
+                                <h6 class="newArticle-field-title">Amount:</h6>
+                                <input type="text" class="newArticle-amount newArticle-field-value" placeholder="Amount" value="testing amount">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="newArticle-desc-container container">
+                        <div class="newArticle_field-container" style="padding:0px;">
+                            <h6 class="newArticle-field-title">Description:</h6>
+                            <textarea cols="100" rows="10" class="newArticle-desc newArticle-field-value" placeholder="Description of the article...">testing description</textarea>
+                        </div>
+                    </div>
+                </div>
+                <button id="new_article_submit">Add!</button>
+            </div>
+        </div>
+        <%- include("components/footer.html") %>
+
+        <script>
+            const submitBtn = document.getElementById("new_article_submit");
+            const imageSelector = document.querySelector(".newArticle-img-selector");
+            var imageObject;
+            var imageName;
+
+            submitBtn.addEventListener('click', function(e){
+                e.preventDefault();
+
+                const newArticle_name = document.querySelector(".newArticle-name").value;
+                const newArticle_author = document.querySelector(".newArticle-author").value;
+                const newArticle_price = document.querySelector(".newArticle-price").value;
+                const newArticle_amount = document.querySelector(".newArticle-amount").value;
+                const newArticle_desc = document.querySelector(".newArticle-desc").value;
+
+                if(newArticle_name && newArticle_author && newArticle_price && newArticle_amount && newArticle_desc && imageObject){
+                    var formData = new FormData();
+                    formData.append('article_name', newArticle_name);
+                    formData.append('article_author', newArticle_author);
+                    formData.append('article_price', newArticle_price);
+                    formData.append('article_amount', newArticle_amount);
+                    formData.append('article_desc', newArticle_desc);
+                    formData.append('article_image', imageObject);
+
+                    console.log(formData);
+                    var http = new XMLHttpRequest();
+                    http.open('POST', "/newArticle");
+                    http.onreadystatechange = function(){
+                        if(http.readyState==4 && http.status==200){
+                            var response = http.responseText;
+                            response = JSON.parse(response);
+
+                            if(response.status == 1){
+                                alert("Done!");
+                            }else{
+                                console.log("Something went wrong...");
+                            }
+                        }else{
+                            console.log("readyState: ", http.readyState);
+                            console.log("status: ", http.status);
+                        }
+                    }
+                    http.send(formData);
+                }else{
+                    alert("Please, complete all fields before to send...");
+                }
+            });
+
+            imageSelector.addEventListener('change', function(){
+                const imageContainer = document.querySelector(".newArticle-img");
+                const files = this.files[0];
+                if(files){
+                    imageObject = files;
+                    imageName = files.name;
+                    var myUrl = URL.createObjectURL(files);
+                    imageContainer.setAttribute('src', myUrl);
+                }
+            });
+
+            function upload_img(){
+                var uploadFileTag = document.querySelector(".newArticle-img-selector");
+                uploadFileTag.click();
+            }
+        </script>
+    </body>
+</html>

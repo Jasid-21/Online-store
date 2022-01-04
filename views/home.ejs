@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style>
+            body{
+                margin:0px;
+                padding: 0px;
+            }
+            #masterContainer{
+                padding: 0px;
+            }
+
+
+            .mainContent-container{
+                display: flex;
+            }
+
+            .main-content{
+                width: 75%;
+                border: 1px solid red;
+                height: 50px;
+            }
+
+            .searchArticle-module{
+                width: 25%;
+                border: 1px solid blue;
+                height: 50px;
+            }
+        </style>
+        <%- include("components/header.html") %>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Online Store: Home</title>
+    </head>
+
+    <body>
+        <div id="masterContainer" class="container-fluid">
+            <!--NAVBAR-->
+            <%- include("components/navbar.html") %>
+
+            <!--MAIN CONTENT-->
+            <div class="mainContent-container container-fluid">
+                <main class="main-content"></main>
+                <aside class="searchArticle-module"></aside>
+            </div>
+        </div>
+        <%- include("components/footer.html") %>
+    </body>
+</html>
