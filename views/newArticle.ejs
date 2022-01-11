@@ -12,41 +12,41 @@
             <%- include("components/navbar.html") %>
 
             <div class="mainContent-container">
-                <div class="newArticle-container container">
+                <form id="new_article-form" class="newArticle-container container">
                     <div class="newArticle-img-container" style="position:relative;">
-                        <input type="file" class="newArticle-img-selector" hidden>
+                        <input type="file" class="newArticle-img-selector" name="newArticle_img" hidden required>
                         <img class="newArticle-img" onclick="upload_img(this)"/>
                     </div>
                     <div class="newArticle_data-container container">
                         <div class="row newArticle-row">
                             <div class="newArticle_field-container col-12 col-md-6">
                                 <h6 class="newArticle-field-title">Article name:</h6>
-                                <input type="text" class="newArticle-name newArticle-field-value" placeholder="Article name" value="testing name">
+                                <input type="text" class="newArticle-name newArticle-field-value" name="newArticle_name" placeholder="Article name" value="testing name" required>
                             </div>
                             <div class="newArticle_field-container col-12 col-md-6">
                                 <h6 class="newArticle-field-title">Author:</h6>
-                                <input type="text" class="newArticle-author newArticle-field-value" disabled value="SefirotHunter">
+                                <input type="text" class="newArticle-author newArticle-field-value" name="newArticle_author" readonly value="SefirotHunter" required>
                             </div>
                         </div>
                         <div class="row newArticle-row">
                             <div class="newArticle_field-container col-12 col-md-6">
                                 <h6 class="newArticle-field-title">Price:</h6>
-                                <input type="text" class="newArticle-price newArticle-field-value" placeholder="Price" value="testing price">
+                                <input type="text" class="newArticle-price newArticle-field-value" name="newArticle_price" placeholder="Price" value="testing price" required>
                             </div>
                             <div class="newArticle_field-container col-12 col-md-6">
                                 <h6 class="newArticle-field-title">Amount:</h6>
-                                <input type="text" class="newArticle-amount newArticle-field-value" placeholder="Amount" value="testing amount">
+                                <input type="text" class="newArticle-amount newArticle-field-value" name="newArticle_amount" placeholder="Amount" value="testing amount" required>
                             </div>
                         </div>
                     </div>
                     <div class="newArticle-desc-container container">
                         <div class="newArticle_field-container" style="padding:0px;">
                             <h6 class="newArticle-field-title">Description:</h6>
-                            <textarea cols="100" rows="10" class="newArticle-desc newArticle-field-value" placeholder="Description of the article...">testing description</textarea>
+                            <textarea cols="100" rows="10" class="newArticle-desc newArticle-field-value" name="newArticle_desc" placeholder="Description of the article..." required>testing description</textarea>
                         </div>
                     </div>
-                </div>
-                <button id="new_article_submit">Add!</button>
+                    <button id="new_article_submit" type="submit">Add!</button>
+                </form>
             </div>
         </div>
         <%- include("components/footer.html") %>
@@ -54,51 +54,34 @@
         <script>
             const submitBtn = document.getElementById("new_article_submit");
             const imageSelector = document.querySelector(".newArticle-img-selector");
+            const newArticleForm = document.getElementById("new_article-form");
             var imageObject;
             var imageName;
 
-            submitBtn.addEventListener('click', function(e){
+            newArticleForm.addEventListener('submit', function(e){
                 e.preventDefault();
+                var formData = new FormData(newArticleForm);
+                console.log(formData);
 
-                const newArticle_name = document.querySelector(".newArticle-name").value;
-                const newArticle_author = document.querySelector(".newArticle-author").value;
-                const newArticle_price = document.querySelector(".newArticle-price").value;
-                const newArticle_amount = document.querySelector(".newArticle-amount").value;
-                const newArticle_desc = document.querySelector(".newArticle-desc").value;
-
-                if(newArticle_name && newArticle_author && newArticle_price && newArticle_amount && newArticle_desc && imageObject){
-                    var formData = new FormData();
-                    formData.append('article_name', newArticle_name);
-                    formData.append('article_author', newArticle_author);
-                    formData.append('article_price', newArticle_price);
-                    formData.append('article_amount', newArticle_amount);
-                    formData.append('article_desc', newArticle_desc);
-                    formData.append('article_image', imageObject);
-
-                    console.log(formData);
-                    var http = new XMLHttpRequest();
-                    http.open('POST', "/newArticle");
-                    http.onreadystatechange = function(){
-                        if(http.readyState==4 && http.status==200){
-                            var response = http.responseText;
-                            response = JSON.parse(response);
-
-                            if(response.status == 1){
-                                alert("Done!");
-                            }else{
-                                console.log("Something went wrong...");
-                            }
+                var http = new XMLHttpRequest();
+                http.open('POST', "/newArticle?user_id="+"0001");
+                http.onreadystatechange = function(){
+                    if(http.readyState==4 & http.status==200){
+                        var response = http.responseText;
+                        response = JSON.parse(response);
+                        
+                        if(response.status == 1){
+                            console.log("Post done!")
                         }else{
-                            console.log("readyState: ", http.readyState);
-                            console.log("status: ", http.status);
+                            alert(response.message);
                         }
+                    }else{
+                        console.log("readyState: ", http.readyState);
+                        console.log("status: ", http.status);
                     }
-                    http.send(formData);
-                }else{
-                    alert("Please, complete all fields before to send...");
                 }
+                http.send(formData);
             });
-
             imageSelector.addEventListener('change', function(){
                 const imageContainer = document.querySelector(".newArticle-img");
                 const files = this.files[0];
