@@ -32,22 +32,51 @@
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page" href="#">My buys</a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight:bold; color:green;">
-                    Create!
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="/newArticle">Article Announcement</a></li>
-                        <li><a class="dropdown-item" href="#">Article required</a></li>
-                    </ul>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="/newArticle" style="color: green; font-weight:700;">New Announcement!</a>
                 </li>
             </ul>
             <div class="profile-user-container">
                 <div class="profile-img-container"></div>
                 <div class="username-container">
-                    <p class="h6">Sefirot Hunter</p>
+                    <a class="nav-link dropdown-toggle dropdown" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Sefirot Hunter
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><p id="logout" class="dropdown-item">Logout</p></li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        const logout = document.getElementById("logout");
+
+        logout.addEventListener('click', function(e){
+            e.preventDefault();
+
+            const sessionObject = localStorage.getItem("STR_session_object");
+            var http = new XMLHttpRequest();
+            http.open("GET", "/logout?session=" + sessionObject);
+            http.onreadystatechange = function(){
+                if(http.readyState==4 && http.status==200){
+                    var response = http.responseText;
+                    response = JSON.parse(response);
+
+                    if(response.status == 1){
+                        localStorage.removeItem("STR_session_object");
+                        console.log("Loging out...");
+                        window.location.replace("/login");
+                    }else{
+                        alert(response.message);
+                    }
+                }else{
+                    console.log(`readyState: ${http.readyState}`);
+                    console.log(`status: ${http.status}`);
+                }
+            }
+            http.send(null);
+        });
+    </script>
 </nav>

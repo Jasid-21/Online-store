@@ -1,0 +1,38 @@
+body{
+    background: rgb(157,213,255);
+    background: linear-gradient(225deg, rgba(157,213,255,1) 0%, rgba(38,79,255,1) 87%);
+}
+form{
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.field-label{
+    color: white;
+}
+
+.field-value{
+    width: 400px;
+}
+
+.login-submit-btn{
+    width: 170px;
+    height: 40px;
+    background-color: rgb(32, 120, 235);
+    color: white;
+    border-radius: 7px;
+
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.info-signup{
+    display:flex;
+    justify-content:center
+}
+
+.info-signup > ul > li{
+    text-shadow: 2px 2px 10px black;
+    color: white;
+}

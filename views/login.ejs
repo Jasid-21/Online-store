@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="css/login.css">
+        <%- include("components/header.html") %>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>OnlineStore: Login</title>
+    </head>
+
+    <body>
+        <div id="masterContainer" class="container-fluid">
+            <div class="container" style="height:97vh; display:flex; justify-content:center; align-items:center;">
+                <div>
+                    <form id="loginForm">
+                        <p class="h3" style="font-style:italic; color:white; text-align:center;">
+                            Login Form
+                        </p>
+                        <hr>
+                        <div class="field-container container">
+                            <p class="field-label h5">Username:</p>
+                            <input class="field-value" type="text" name="username" required>
+                        </div>
+                        <br>
+                        <div class="field-container container">
+                            <p class="field-label h5">Password</p>
+                            <input class="field-value" type="password" name="password" required>
+                        </div>
+                        <br>
+                        <div class="field-container container" style="display:flex; justify-content:flex-end;">
+                            <button type="submit" class="login-submit-btn">Login!</button>
+                        </div>
+                    </form>
+                    <br>
+                    <div class="container info-signup">
+                        <ul>
+                            <li>
+                                If you don't have an account, you can create one <br> by clicking <a href="/signup" style="font-size:19px; color:blue">here</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include("components/footer.html") %>
+        <script src="scripts/login.js"></script>
+    </body>
+</html>

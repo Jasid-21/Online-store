@@ -1,3 +1,5 @@
 node_modules
 .env
 structures.txt
+management.js
+testing.ejs

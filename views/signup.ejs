@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="css/signup.css">
+        <%- include("components/header.html") %>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Document</title>
+    </head>
+
+    <body>
+        <div id="masterContainer" class="container-fluid">
+            <div class="container" style="height:97vh; display:flex; justify-content:center; align-items:center;">
+                <div>
+                    <form id="signup-form">
+                        <p class="h3" style="font-style:italic; text-align:center;">
+                            Create an account!
+                        </p>
+                        <hr>
+                        <div class="field-container container">
+                            <p class="h5 field-name">Username:</p>
+                            <input type="text" name="username" class="field-value" required>
+                        </div>
+                        <br>
+                        <div class="field-container container">
+                            <p class="h5 field-name">Password:</p>
+                            <input type="password" name="password" class="field-value" required>
+                        </div>
+                        <br>
+                        <div class="field-container container">
+                            <p class="h5 field-name">Confirm password:</p>
+                            <input type="password" name="confirm" class="field-value" required>
+                        </div>
+                        <br>
+                        <div class="field-container container" style="display:flex; justify-content:flex-end;">
+                            <button type="submit" class="signup-submit-btn">Signup!</button>
+                        </div>
+                    </form>
+                    <br>
+                    <p style="color:white;">If you alredy have an account, click <a href="/login" style="font-size:19px; color:rgb(55, 175, 255)">here</a> to Login</p>
+                </div>
+            </div>
+        </div>
+
+        <%- include("components/footer.html") %>
+        <script src="scripts/signup.js"></script>
+    </body>
+</html>

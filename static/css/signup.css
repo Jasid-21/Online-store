@@ -1,0 +1,26 @@
+body{
+    background: rgb(22,103,164);
+    background: linear-gradient(-135deg, rgba(22,103,164,1) 0%, rgba(3,7,88,1) 87%);
+}
+
+form{
+    background: rgba(255, 255, 255, 0.5);
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.field-value{
+    width: 300px;
+}
+
+.signup-submit-btn{
+    width: 100px;
+    height: 40px;
+    background-color: darkblue;
+    border: 2px solid black;
+    border-radius: 7px;
+    color: white;
+    font-size: 17px;
+    font-weight: 700;
+}
