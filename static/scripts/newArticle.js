@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function(){
             if(http.readyState==4 && http.status==200){
                 var response = http.responseText;
                 response = JSON.parse(response);
+                console.log(response)
                 if(response.status == 1){
                     console.log("new article: Done...");
                 }else{

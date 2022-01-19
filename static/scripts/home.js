@@ -1,3 +1,5 @@
+const username_value = document.getElementById("username_value");
+
 document.addEventListener('DOMContentLoaded', function(){
     var session = localStorage.getItem('STR_session_object');
     if(session){
@@ -9,6 +11,9 @@ document.addEventListener('DOMContentLoaded', function(){
                 response = JSON.parse(response);
                 if(response.status == 1){
                     console.log("Home: Done...");
+
+                    session = JSON.parse(session);
+                    username_value.innerHTML = session.username;
                 }else{
                     window.location.replace("/login");
                 }

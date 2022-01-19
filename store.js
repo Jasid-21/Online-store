@@ -1,5 +1,6 @@
 //GLOBAL VARIABLES AND LIBRARIES.
 const express = require('express');
+const session = require('express-session');
 const mongoose = require("mongoose");
 
 const mimetypes = require('mime-types');
@@ -22,6 +23,11 @@ require("dotenv").config();
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'ejs');
 app.use(express.static('static'));
+app.use(session({
+    secret: "secret_key",
+    resave: false,
+    saveUninitialized: false
+}));
 
 mongoose.connect('mongodb://127.0.0.1:27017/onlineStoreDb', function(error, db){
     if(error){
@@ -31,8 +37,20 @@ mongoose.connect('mongodb://127.0.0.1:27017/onlineStoreDb', function(error, db){
     }
 });
 
+
+//--------------------------------------ALL OF THIS IS FOR TESTING NEW KNOWLEDGES--------------
+app.get("/test", function(req, resp){
+    req.session.isAuth = true;
+    console.log(req.session);
+    console.log(req.session.id);
+    resp.send("Hello world!");
+});
+//-------------------------------------- HERE IS THE FINAL OF TESTING SECTION------------------
+
+
 //ROUTES.
 app.get("/login", function(req, resp){
+    console.log(req.headers);
     const verifying = req.query.verifying;
     if(!verifying){
         resp.render("login");
@@ -193,9 +211,11 @@ app.get("/newArticle", function(req, resp){
         const receivedSession = req.query.session;
         validateSession(receivedSession).then(function(response){
             if(response == true){
-                resp.send({"status": 1});
+                //resp.send({"status": 1});
+                resp.redirect("/login");
             }else{
-                resp.send({"status": 2});
+                //resp.send({"status": 2});
+                resp.redirect("/login");
             }
         }).catch(function(error){
             console.log("Error verifying session in new Article: ", error);
@@ -230,19 +250,6 @@ app.post("/newArticle", upload.single('newArticle_img'), function(req, resp){
     });
 });
 
-
-
-
-//--------------------------------------ALL OF THIS IS FOR TESTING NEW KNOWLEDGES--------------
-app.get("/test", function(req, resp){
-    const requesting = req.query.requesting;
-    if(!requesting){
-        resp.render("testing");
-    }else{
-        resp.send(sessionObject);
-    }
-});
-//-------------------------------------- HERE IS THE FINAL OF TESTING SECTION--------------
 
 //FINAL.
 app.listen(app.get('port'), function(){
