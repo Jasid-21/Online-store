@@ -13,9 +13,63 @@
             <%- include("components/navbar.html") %>
 
             <!--MAIN CONTENT-->
+            <button class="searchArticle-button">S</button>
             <div class="mainContent-container container-fluid">
-                <main class="main-content"></main>
-                <aside class="searchArticle-module"></aside>
+                <main class="main-content">
+                    <% if(locals.errorMessage){ %>
+                        <div class="errorMessageDiv">
+                            <%- errorMessage %>
+                        </div>
+                    <% }else{ %>
+                        <% if(locals.homeArticles){ %>
+                            <% for(var i=0; i<homeArticles.length; i++){ %>
+                                <div class="articles-row">
+                                    <div class="article-col">
+                                        <div class="article-item-container"></div>
+                                    </div>
+
+                                    <div class="article-col">
+                                        <div class="article-item-container"></div>
+                                    </div>
+                                    
+                                    <div class="article-col">
+                                        <div class="article-item-container"></div>
+                                    </div>
+                                    
+                                    <div class="article-col">
+                                        <div class="article-item-container"></div>
+                                    </div>
+                                </div>
+                                <br>
+                            <% } %>
+                        <% }else{ %>
+                            <div class="emptyContentMessage container">
+                                There ere no items for show to this account
+                            </div>
+                        <% } %>
+                    <% } %>
+                </main>
+                <aside class="searchArticle-module">
+                    <form id="search-form" class="search-form">
+                        <div class="input-field-container container">
+                            <p class="h6">By user:</p>
+                            <input type="text" name="byUser" id="" class="input-value">
+                        </div>
+                        <br>
+                        <div class="input-field-container container">
+                            <p class="h6">By name:</p>
+                            <input type="text" name="byName" id="" class="input-value">
+                        </div>
+                        <br>
+                        <div class="input-field-container container">
+                            <p class="h6">By price:</p>
+                            <input type="text" name="byPrice" id="" class="input-value">
+                        </div>
+                        <br>
+                        <button id="search-submit" class="search-submit" type="submit">Search!</button>
+                        <button id="search-refresh" class="search-refresh">Refresh</button>
+                    </form>
+                </aside>
             </div>
         </div>
         <%- include("components/footer.html") %>

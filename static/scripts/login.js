@@ -13,8 +13,16 @@ loginForm.addEventListener('submit', function(e){
 
             if(response.status == 1){
                 console.log("You are inside!");
-                console.log(response.sessionObject);
-                localStorage.setItem("STR_session_object", JSON.stringify(response.sessionObject));
+                const cookieName = response.cookieName,
+                cookieValue = response.cookieValue,
+                cookieTime = response.cookieTime;
+                const newCookie = `${cookieName}=${cookieValue}; expires = ${cookieTime}`;
+
+                document.cookie = newCookie;
+                localStorage.setItem("STR_session_object", JSON.stringify({
+                    user_id: response.user_id,
+                    username: response.username
+                }));
                 window.location.replace("/");
             }else{
                 console.log(response.message);
@@ -25,26 +33,4 @@ loginForm.addEventListener('submit', function(e){
         }
     }
     http.send(formData);
-});
-
-document.addEventListener('DOMContentLoaded', function(){
-    var sessionObject = localStorage.getItem("STR_session_object");
-
-    var http = new XMLHttpRequest();
-    http.open("GET", "/login?verifying=1&session=" + sessionObject);
-    http.onreadystatechange = function(){
-        if(http.readyState==4 && http.status==200){
-            var response = http.responseText;
-            response = JSON.parse(response);
-
-            if(response.status == 1){
-                console.log("Session alredy found!");
-                window.location.replace("/");
-            }
-        }else{
-            console.log(`readyState: ${http.readyState}`)
-            console.log(`status: ${http.status}`);
-        }
-    }
-    http.send(null);
 });

@@ -38,10 +38,10 @@
             </ul>
             <div class="profile-user-container">
                 <div class="profile-img-container"></div>
-                <div class="username-container">
-                    <a id="username_value" class="nav-link dropdown-toggle dropdown" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"></a>
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="username_value" role="button" data-bs-toggle="dropdown" aria-expanded="false"></a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><p id="logout" class="dropdown-item">Logout</p></li>
+                      <li><a id="logout" class="dropdown-item">Logout</a></li>
                     </ul>
                 </div>
             </div>
@@ -63,8 +63,9 @@
                     response = JSON.parse(response);
 
                     if(response.status == 1){
-                        localStorage.removeItem("STR_session_object");
                         console.log("Loging out...");
+                        localStorage.removeItem("STR_session_object");
+                        document.cookie = "session_cookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                         window.location.replace("/login");
                     }else{
                         alert(response.message);
@@ -75,6 +76,18 @@
                 }
             }
             http.send(null);
+        });
+
+        document.addEventListener('DOMContentLoaded', function(){
+            var session_object = localStorage.getItem("STR_session_object");
+            if(session_object){
+                session_object = JSON.parse(session_object);
+                const username_field = document.getElementById("username_value");
+
+                username_field.innerHTML = session_object.username;
+            }else{
+                console.log("Session object not found...");
+            }
         });
     </script>
 </nav>

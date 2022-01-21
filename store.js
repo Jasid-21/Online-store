@@ -1,7 +1,8 @@
 //GLOBAL VARIABLES AND LIBRARIES.
 const express = require('express');
-const session = require('express-session');
+const express_session = require('express-session');
 const mongoose = require("mongoose");
+const cookieParser = require('cookie-parser');
 
 const mimetypes = require('mime-types');
 const multer = require('multer');
@@ -15,6 +16,7 @@ const upload = multer({
     storage: storage
 });
 const models = require('./schemas.js');
+const initialPostsNum = 4;
 
 const app = express();
 
@@ -23,10 +25,11 @@ require("dotenv").config();
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'ejs');
 app.use(express.static('static'));
-app.use(session({
+app.use(cookieParser());
+app.use(express_session({
     secret: "secret_key",
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: true
 }));
 
 mongoose.connect('mongodb://127.0.0.1:27017/onlineStoreDb', function(error, db){
@@ -37,37 +40,43 @@ mongoose.connect('mongodb://127.0.0.1:27017/onlineStoreDb', function(error, db){
     }
 });
 
-
 //--------------------------------------ALL OF THIS IS FOR TESTING NEW KNOWLEDGES--------------
 app.get("/test", function(req, resp){
-    req.session.isAuth = true;
-    console.log(req.session);
-    console.log(req.session.id);
+    console.log("----------------------------");
+    //console.log(req.cookies.name);
+    console.log(req.cookies);
+    //console.log(req.session);
+    //console.log(req.session.id);
     resp.send("Hello world!");
 });
+
+app.get("/testLogin", function(req, resp){
+    console.log("Testing testLogin...");
+    cookieName = "test_cookie2";
+    maxTime = new Date() + 9999;
+    resp.cookie(cookieName, "1234567", {maxAge: 9999});
+    console.log("Seting cookie...");
+    resp.send("I think you are logedIn...");
+    //resp.send({status: 1, sessionId: sessionId});
+})
+
+function checkCookie(req, resp, next){
+    const receivedCookie = req.session.id;
+    console.log(receivedCookie);
+    console.log(sessionId);
+
+    if(receivedCookie == sessionId){
+        next()
+    }else{
+        resp.send("bad credentials")
+    }
+}
 //-------------------------------------- HERE IS THE FINAL OF TESTING SECTION------------------
 
 
 //ROUTES.
 app.get("/login", function(req, resp){
-    console.log(req.headers);
-    const verifying = req.query.verifying;
-    if(!verifying){
-        resp.render("login");
-    }else{
-        const receivedSession = req.query.session;
-        validateSession(receivedSession).then(function(response){
-            if(response == true){
-                console.log("Session validated!");
-                resp.send({status: 1});
-            }else{
-                console.log("Session not found...");
-                resp.send({status: 0, message: "Session not found..."});
-            }
-        }).catch(function(error){
-            console.log("Error validating session in /login: ", error);
-        });
-    }
+    resp.render("login");
 });
 
 app.post("/login", upload.single(""), function(req, resp){
@@ -78,17 +87,25 @@ app.post("/login", upload.single(""), function(req, resp){
         if(response){
             if(password == response.password){
                 console.log("Authenticating...");
-
+                const sessionId = createToken(30);
+                const username = response.username;
+                const user_id = response.id;
                 const sessionObject = new models.Session({
+                    session_id: sessionId,
                     user_id: response.id,
-                    nav_id: `${createToken(5)}-${createToken(5)}-${createToken(5)}-${createToken(5)}`,
-                    username: response.username,
-                    session_token: createToken(30)
+                    username: response.username
                 });
 
                 sessionObject.save().then(function(){
                     console.log("New session saved...");
-                    resp.send({status: 1, sessionObject: sessionObject});
+                    resp.send({
+                        status: 1,
+                        username: username,
+                        cookieName: "session_cookie",
+                        cookieValue: sessionId,
+                        cookieTime: new Date(2025, 0, 1).toUTCString(),
+                        user_id: user_id
+                    });
                 }).catch(function(error){
                     console.log("Error trying to save session object: ", error);
                     resp.send({status: 0, message: "Error trying to save new session object..."});
@@ -97,6 +114,8 @@ app.post("/login", upload.single(""), function(req, resp){
                 console.log("User or password doesn't match.");
                 resp.send({status: 0, message: "Incorrect user or password."});
             }
+        }else{
+            resp.send({status: 0, message: "Username not found..."});
         }
     }).catch(function(error){
         console.log("Error trying to login: ", error);
@@ -126,10 +145,9 @@ app.post("/signup", upload.single(""), function(req, resp){
                 });
                 objectToSend.save().then(function(user){
                     const firstSession = new models.Session({
+                        session_id: req.session.id,
                         user_id: user.id,
-                        username: username,
-                        nav_id: `${createToken(5)}-${createToken(5)}-${createToken(5)}-${createToken(5)}`,
-                        session_token: createToken(30)
+                        username: username
                     });
 
                     firstSession.save().then(function(){
@@ -154,28 +172,17 @@ app.post("/signup", upload.single(""), function(req, resp){
 });
 
 app.get("/logout", function(req, resp){
-    const session = req.query.session;
+    const session = req.cookies.session_cookie;
     if(session){
-        models.Session.findOne({
-            nav_id: session.sav_id,
-            session_token: session.session_token
-        }, function(error, data){
-            if(!error){
-                models.Session.deleteOne({
-                    nav_id: session.sav_id,
-                    session_token: session.session_token
-                }, function(error2){
-                    if(error2){
-                        console.log("Error removing session: ", error);
-                        resp.send({status: 0, message: "Error removing session..."});
-                    }else{
-                        console.log("Session removed successfully...");
-                        resp.send({status: 1});
-                    }
-                });
+        models.Session.deleteOne({
+            session_id: session
+        }, function(error){
+            if(error){
+                console.log("Error removing session: ", error);
+                resp.send({status: 0, message: "Error removing session..."});
             }else{
-                console.log("Error finding required session: ", error);
-                resp.send({status: 0, message: "Error finding required session..."});
+                console.log("Session removed successfully...");
+                resp.send({status: 1});
             }
         });
     }else{
@@ -184,47 +191,36 @@ app.get("/logout", function(req, resp){
     }
 });
 
-app.get("/", function(req, resp){
-    const verifying = req.query.verifying;
-    if(!verifying){
-        resp.render("home");
-    }else{
-        const receivedSession = req.query.session;
-        validateSession(receivedSession).then(function(response){
-            if(response == true){
-                resp.send({"status": 1});
+app.get("/", validateSession, function(req, resp){
+    const session_id = req.cookies.session_cookie;
+    if(session_id){
+        models.Session.findOne({session_id: session_id}, function(error, data){
+            if(error){
+                console.log("Error trying to get data for the session: ", error);
+                resp.send({status: 0, message: "Error trying to get data for this session..."});
             }else{
-                resp.send({"status": 2});
+                const userId = data.user_id;
+                getHomeArticles(userId).then(function(response){
+                    console.log("Showing response:");
+                    console.log(response);
+                    resp.render("home", {homeArticles: response});
+                }).catch(function(error){
+                    console.log(error);
+                    resp.render("home", {errorMessage: "Error trying to get inital home articles  :("});
+                });
             }
-        }).catch(function(error){
-            console.log("Error validating session: ", error);
-            resp.send({"status": 0, "message": "An error has occured verifying the session."});
         });
+    }else{
+        console.log("Redirecting...");
+        resp.redirect("/login");
     }
 });
 
-app.get("/newArticle", function(req, resp){
-    const verifying = req.query.verifying;
-    if(!verifying){
-        resp.render("newArticle");
-    }else{
-        const receivedSession = req.query.session;
-        validateSession(receivedSession).then(function(response){
-            if(response == true){
-                //resp.send({"status": 1});
-                resp.redirect("/login");
-            }else{
-                //resp.send({"status": 2});
-                resp.redirect("/login");
-            }
-        }).catch(function(error){
-            console.log("Error verifying session in new Article: ", error);
-            resp.send({"status": 0});
-        });
-    }
+app.get("/newArticle", validateSession, function(req, resp){
+    resp.render("newArticle");
 });
 
-app.post("/newArticle", upload.single('newArticle_img'), function(req, resp){
+app.post("/newArticle", [validateSession, upload.single('newArticle_img')], function(req, resp){
     var path = "";
     var pathArray = req.file.path.split("\\");
     for(var i=0; i<pathArray.length - 1; i++){
@@ -258,28 +254,6 @@ app.listen(app.get('port'), function(){
 
 
 //FUNCTIONS.
-async function validateSession(object){
-    object = JSON.parse(object);
-    if(object){
-        const data = await models.Session.findOne({
-            user_id: object.user_id,
-            nav_id: object.nav_id,
-            session_token: object.session_token
-        });
-    
-        if(data){
-            console.log("Session found...");
-            return true;
-        }else{
-            console.log("Session not found...");
-            return false;
-        }
-    }else{
-        console.log("Missing session object to compare...");
-        return false;
-    }
-}
-
 async function getUserByName(value, boolean){
     const response = await models.User.findOne({username: value});
     if(boolean == true){
@@ -305,4 +279,41 @@ function createToken(max){
     }
 
     return token;
+}
+
+async function validateSession(req, resp, next){
+    try{
+        const data = await models.Session.findOne({session_id: req.cookies.session_cookie});
+
+        if(data){
+            next();
+        }else{
+            resp.redirect("/login");
+        }
+    }catch(error){
+        console.log("Error verifying session: ", error);
+        resp.redirect("/login");
+    }
+}
+
+async function getHomeArticles(user_id){
+    const friends = await models.Friend.find({user1: user_id});
+    console.log(friends);
+    var friends_items = new Array();
+
+    if(friends){
+        for(var friend of friends){
+            const items = await models.Article.find({user_ID: friend.user2});
+            for(var item of items){
+                friends_items.push(item);
+            }
+        }
+    }
+
+    var items = await models.Article.find().limit(initialPostsNum - friends_items.length);
+    for(var item of items){
+        friends_items.push(item);
+    }
+
+    return friends_items;
 }

@@ -21,15 +21,20 @@ const userSchema = new mongoose.Schema({
 });
 
 const sessionSchema = new mongoose.Schema({
+    session_id: {type: String, required: true},
     user_id: {type: String, required: true},
     username: {type: String, required: true},
-    nav_id: {type: String, required: true},
-    session_token: {type: String, required: true}
 });
+
+const friendSchema = new mongoose.Schema({
+    user1: {type: String, required: true},
+    user2: {type: String, required: true}
+})
 
 var modulesToExport = {
     Article: mongoose.model('Article', articleSchema),
     User: mongoose.model('User', userSchema),
-    Session: mongoose.model('Session', sessionSchema)
+    Session: mongoose.model('Session', sessionSchema),
+    Friend: mongoose.model('Friend', friendSchema)
 };
 module.exports = modulesToExport;
