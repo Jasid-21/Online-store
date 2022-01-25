@@ -25,6 +25,10 @@
     background-color:lightblue;
 }
 
+.newArticle-img:hover{
+    cursor: pointer;
+}
+
 .newArticle-img-selector{
     width:100%;
 }

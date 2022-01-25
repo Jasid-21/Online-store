@@ -29,12 +29,28 @@ const sessionSchema = new mongoose.Schema({
 const friendSchema = new mongoose.Schema({
     user1: {type: String, required: true},
     user2: {type: String, required: true}
-})
+});
+
+const cartSchema = new mongoose.Schema({
+    user_id: {type: String, required: true},
+    article_id: {type: String, required: true}
+}, {
+    timestamps: true
+});
+
+const buySchema = new mongoose.Schema({
+    user_id: {type: String, required: true},
+    article_id: {type: String, required: true}
+},{
+    timestamps: true
+});
 
 var modulesToExport = {
     Article: mongoose.model('Article', articleSchema),
     User: mongoose.model('User', userSchema),
     Session: mongoose.model('Session', sessionSchema),
-    Friend: mongoose.model('Friend', friendSchema)
+    Friend: mongoose.model('Friend', friendSchema),
+    Cart: mongoose.model('Cart', cartSchema),
+    Buy: mongoose.model('Buy', buySchema)
 };
 module.exports = modulesToExport;

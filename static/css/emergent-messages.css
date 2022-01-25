@@ -1,0 +1,27 @@
+.emergent-message{
+    width: 250px;
+    height: auto;
+    min-height: 70px;
+
+    border-radius: 10px;
+    padding: 10px;
+    font-weight: 600;
+    color: rgb(0, 80, 0);
+    opacity:0;
+    filter:alpha(opacity=0);
+    cursor: pointer;
+
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: absolute;
+    margin: 0 40%;
+    margin-top: 10px;
+}
+
+.emergent-done{
+    background-color: lightgreen;
+    border: 2px solid green;
+}

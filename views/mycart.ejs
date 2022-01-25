@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include("components/header.html") %>
+        <link rel="stylesheet" href="css/mycart.css">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>OnlineStore: My Cart</title>
+    </head>
+
+    <body>
+        <div id="masterContainer" class="container-fluid">
+            <%- include("components/navbar.html") %>
+
+            <button class="payCart-button">P</button>
+            <div class="mainContent-container container-fluid">
+                <div class="cart-container container">
+                    <% if(locals.errorMessage){ %>
+                        <div class="errorMessageDiv container">
+                            <%= errorMessage %>
+                        </div>
+                    <% }else{ %>
+                        <% if(mycart.length == 0){ %>
+                            <div class="emptyContentMessage container">
+                                You don't have items on your cart...
+                            </div>
+                        <% } %>
+                    <% } %>
+                </div>
+                <aside class="info-container container"></aside>
+            </div>
+        </div>
+        <%- include("components/footer.html") %>
+        <% if(locals.mycart){ %>
+            <% if(mycart.length > 0){ %>
+                <script>
+                    const main_content = document.querySelector(".cart-container");
+                    const items = <%- JSON.stringify(mycart) %>;
+
+                    for(var item of items){
+                        const item_container = document.createElement("div");
+                        item_container.setAttribute("class", "mycart-item-container container-fluid");
+
+                        const image_container = document.createElement("div");
+                        image_container.setAttribute("class", "image-container");
+
+                        const item_image = document.createElement("img");
+                        item_image.setAttribute("class", "item-image");
+                        item_image.setAttribute("src", item.url);
+
+                        image_container.appendChild(item_image);
+                        item_container.appendChild(image_container);
+
+                        const info_container = document.createElement("div");
+                        info_container.setAttribute("class", "item-info-container");
+
+                        info_container.appendChild(createArticleField("name", "Name", item.name));
+                        info_container.appendChild(createArticleField("author", "Author", item.author));
+                        info_container.appendChild(createArticleField("price", "Price", item.price));
+                        info_container.appendChild(createArticleField("description", "Description", item.description));
+
+                        const buttons_container = document.createElement("div");
+                        buttons_container.setAttribute("class", "buttons-container container");
+
+                        const remove_button = document.createElement("button");
+                        remove_button.setAttribute("class", "remove-button");
+                        remove_button.innerHTML = "Remove";
+
+                        item_container.appendChild(info_container);
+
+                        main_content.appendChild(item_container);
+                        const br = document.createElement("br");
+                        main_content.appendChild(br);
+                    }
+
+                    function createArticleField(differ, key_name, value){
+                        const article_name_field = document.createElement("div");
+                        article_name_field.setAttribute("class", `article-${differ}-field article-field container`);
+                        const article_name_key = document.createElement("h6");
+                        article_name_key.setAttribute("class", `article-${differ}-key article-key h5`);
+                        article_name_key.innerHTML = key_name + ":&nbsp";
+
+                        article_name_field.appendChild(article_name_key);
+
+                        const article_name_value = document.createElement("p");
+                        article_name_value.setAttribute("class", `article-${differ}-value article-value p`);
+                        article_name_value.innerHTML = value;
+
+                        article_name_field.appendChild(article_name_value);
+
+                        return article_name_field;
+                    }
+                </script>
+            <% } %>
+        <% } %>
+    </body>
+</html>

@@ -223,7 +223,7 @@ app.get("/newArticle", validateSession, function(req, resp){
 app.post("/newArticle", [validateSession, upload.single('newArticle_img')], function(req, resp){
     var path = "";
     var pathArray = req.file.path.split("\\");
-    for(var i=0; i<pathArray.length - 1; i++){
+    for(var i=1; i<pathArray.length - 1; i++){
         path += pathArray[i] + "/";
     }
     path += pathArray[pathArray.length - 1];
@@ -244,6 +244,64 @@ app.post("/newArticle", [validateSession, upload.single('newArticle_img')], func
         console.log("Error trying to save new article: ", error);
         resp.send({"status": 0, "message": "Error trying to save new article..."});
     });
+});
+
+app.get("/moreInfo", validateSession, function(req, resp){
+    const item_id = req.query.article_id;
+
+    models.Article.findById(item_id, function(error, data){
+        if(error){
+            console.log(error);
+            resp.send({status: 0, message: error});
+        }else{
+            console.log(data);
+            resp.render("article_info", {article_info: data});
+        }
+    });
+});
+
+app.get("/mycart", validateSession, function(req, resp){
+    const user_id = req.id;
+    getCartItems(user_id).then(function(data){
+        console.log(data);
+        resp.render("mycart", {mycart: data});
+    }).catch(function(error){
+        console.log(error);
+        resp.render("mycart", {errorMessage: "Error trying to get your cart items. Please, try later..."});
+    });
+});
+
+app.post("/mycart", validateSession, function(req, resp){
+    const user_id = req.id;
+    const article_id = req.query.article_id;
+    try{
+        const toCart = new models.Cart({
+            user_id: user_id,
+            article_id: article_id
+        });
+
+        toCart.save().then(function(){
+            console.log("Article added to cart!");
+            resp.send({status: 1});
+        }).catch(function(error){
+            console.log(error);
+            resp.send({status: 0, message: "Error trying to add article to cart..."});
+        });
+    }catch(error){
+        console.log(error);
+        resp.send({status: 0, message: "Error trying to add article to cart..."});
+    }
+});
+
+app.get("/buys", validateSession, function(req, resp){
+    resp.render("buys");
+});
+
+app.post("/buys", validateSession, function(req, resp){
+    const user_id = req.id;
+    const article_id = req.query.article_id;
+    console.log("Here done!");
+    resp.send({status: 1});
 });
 
 
@@ -286,6 +344,7 @@ async function validateSession(req, resp, next){
         const data = await models.Session.findOne({session_id: req.cookies.session_cookie});
 
         if(data){
+            req.id = data.user_id;
             next();
         }else{
             resp.redirect("/login");
@@ -316,4 +375,16 @@ async function getHomeArticles(user_id){
     }
 
     return friends_items;
+}
+
+async function getCartItems(user_id){
+    var articles = new Array();
+    const articleIds = await models.Cart.find({user_id: user_id});
+
+    for(var id of articleIds){
+        const article = await models.Article.findById(id.article_id);
+        articles.push(article);
+    }
+
+    return articles;
 }

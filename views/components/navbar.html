@@ -14,6 +14,10 @@
         display: flex;
         align-items: center;
     }
+
+    #logout{
+        border-top: 1px solid gray;
+    }
 </style>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light" style="border-bottom:2px solid gray;">
@@ -41,7 +45,8 @@
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="username_value" role="button" data-bs-toggle="dropdown" aria-expanded="false"></a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <li><a id="logout" class="dropdown-item">Logout</a></li>
+                        <li><a id="mycart" class="dropdown-item" href="/mycart">My cart</a></li>
+                        <li><a id="logout" class="dropdown-item">Logout</a></li>
                     </ul>
                 </div>
             </div>

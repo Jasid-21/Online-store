@@ -9,6 +9,9 @@
 
     <body>
         <div id="masterContainer" class="container-fluid">
+            <div id="my-done-message" class="emergent-message emergent-done">
+                Article added to your cart!
+            </div>
             <!--NAVBAR-->
             <%- include("components/navbar.html") %>
 
@@ -17,32 +20,11 @@
             <div class="mainContent-container container-fluid">
                 <main class="main-content">
                     <% if(locals.errorMessage){ %>
-                        <div class="errorMessageDiv">
+                        <div class="errorMessageDiv container">
                             <%- errorMessage %>
                         </div>
                     <% }else{ %>
-                        <% if(locals.homeArticles){ %>
-                            <% for(var i=0; i<homeArticles.length; i++){ %>
-                                <div class="articles-row">
-                                    <div class="article-col">
-                                        <div class="article-item-container"></div>
-                                    </div>
-
-                                    <div class="article-col">
-                                        <div class="article-item-container"></div>
-                                    </div>
-                                    
-                                    <div class="article-col">
-                                        <div class="article-item-container"></div>
-                                    </div>
-                                    
-                                    <div class="article-col">
-                                        <div class="article-item-container"></div>
-                                    </div>
-                                </div>
-                                <br>
-                            <% } %>
-                        <% }else{ %>
+                        <% if(homeArticles.length <= 0){ %>
                             <div class="emptyContentMessage container">
                                 There ere no items for show to this account
                             </div>
@@ -67,12 +49,24 @@
                         </div>
                         <br>
                         <button id="search-submit" class="search-submit" type="submit">Search!</button>
-                        <button id="search-refresh" class="search-refresh">Refresh</button>
+                        <button id="search-refresh" class="search-refresh">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                            </svg>
+                        </button>
                     </form>
                 </aside>
             </div>
         </div>
         <%- include("components/footer.html") %>
+        <% if(homeArticles.length > 0){ %>
+            <script>
+                const main_content = document.querySelector(".main-content");
+                const items = <%- JSON.stringify(homeArticles) %>
+            </script>
+            <script src="scripts/createHomeArticles.js"></script>
+        <% } %>
         <script src="scripts/home.js"></script>
     </body>
 </html>
