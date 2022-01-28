@@ -1,0 +1,34 @@
+.info-container{
+    min-height: 50px;
+    padding: 10px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#pay-info-form{
+    border: 2px double black;
+    padding: 15px;
+}
+
+input.pay-field-value{
+    width: 100%;
+}
+
+input.small_field{
+    width: 80px;
+}
+
+.pay-form-button{
+    width: 100%;
+    border-radius: 5px;
+    border: 2px solid gray;
+    background-color: rgb(39, 46, 43);
+    color: white;
+    font-weight: 600;
+}
+
+.pay-form-button:hover{
+    background-color: rgb(26, 27, 27);
+}

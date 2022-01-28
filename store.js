@@ -255,7 +255,7 @@ app.get("/moreInfo", validateSession, function(req, resp){
             resp.send({status: 0, message: error});
         }else{
             console.log(data);
-            resp.render("article_info", {article_info: data});
+            resp.send({status: 1, article_info: data});
         }
     });
 });
@@ -268,6 +268,23 @@ app.get("/mycart", validateSession, function(req, resp){
     }).catch(function(error){
         console.log(error);
         resp.render("mycart", {errorMessage: "Error trying to get your cart items. Please, try later..."});
+    });
+});
+
+app.delete("/mycart", validateSession, function(req, resp){
+    const article_id = req.query.article_id;
+    const user_id = req.id;
+    console.log(article_id);
+    console.log(user_id);
+
+    models.Cart.deleteOne({user_id: user_id, article_id: article_id}, function(error){
+        if(error){
+            console.log(error);
+            resp.send({status: 0, message: "Error trygin to remove this item from your cart..."});
+        }else{
+            console.log("Remove cart item: Done!");
+            resp.send({status: 1});
+        }
     });
 });
 
@@ -293,15 +310,36 @@ app.post("/mycart", validateSession, function(req, resp){
     }
 });
 
-app.get("/buys", validateSession, function(req, resp){
-    resp.render("buys");
-});
-
-app.post("/buys", validateSession, function(req, resp){
+app.post("/payCart", [validateSession, upload.single("")], function(req, resp){
     const user_id = req.id;
-    const article_id = req.query.article_id;
-    console.log("Here done!");
-    resp.send({status: 1});
+    const pay_information = req.body;
+    console.log(pay_information);
+
+    var cont = 0;
+    if(pay_information.card_number == process.env.CARD_NUMBER){
+        cont++;
+    }
+    if(pay_information.expiration_date == process.env.CARD_EXPIRATION){
+        cont++;
+    }
+    if(pay_information.cvc_number == process.env.CARD_CVC){
+        cont++;
+    }
+
+    if(cont === 3){
+        models.Cart.deleteMany({user_id: user_id}, function(error){
+            if(error){
+                console.log(error);
+                resp.send({status: 0, message: "Error trying to pay your products..."});
+            }else{
+                console.log("Payment applyed!");
+
+                resp.send({status: 1});
+            }
+        });
+    }else{
+        resp.send({status: 0, message: "Information doesn't match..."});
+    }
 });
 
 

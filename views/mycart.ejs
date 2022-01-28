@@ -3,13 +3,17 @@
     <head>
         <%- include("components/header.html") %>
         <link rel="stylesheet" href="css/mycart.css">
+        <link rel="stylesheet" href="css/mycart-pay-form.css">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>OnlineStore: My Cart</title>
     </head>
 
     <body>
         <div id="masterContainer" class="container-fluid">
-            <%- include("components/navbar.html") %>
+            <%- include("components/navbar.ejs") %>
+            <div id="black_background-window" class="emergent-windows-container container-fluid">
+                <%- include("components/newArticle.html") %>
+            </div>
 
             <button class="payCart-button">P</button>
             <div class="mainContent-container container-fluid">
@@ -26,7 +30,36 @@
                         <% } %>
                     <% } %>
                 </div>
-                <aside class="info-container container"></aside>
+                <aside class="info-container container">
+                    <form id="pay-info-form">
+                        <h3 class="form-title">
+                            Payment methods.
+                        </h3>
+                        <h6 style="text-align:center; font-size:13px;">
+                            Use the example values bellow:
+                        </h6>
+                        <hr>
+                        <div class="pay-form-field">
+                            <label for="card_number" class="pay-field-key">Card number:</label>
+                            <br>
+                            <input class="pay-field-value" type="text" name="card_number" value="1234-4321-5678-8765" required>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <div class="pay-form-field">
+                                <label for="expiration_date" class="pay-field-key">Exp.date:</label>
+                                <br>
+                                <input class="pay-field-value small_field" type="text" name="expiration_date" value="12/25" required>
+                            </div>
+                            <div class="pay-form-field">
+                                <label for="cvc_number" class="pay-field-key">CVC:</label>
+                                <br>
+                                <input class="pay-field-value small_field" type="text" name="cvc_number" value="123" required>
+                            </div>
+                        </div>
+                        <br>
+                        <button type="submit" class="pay-form-button">Pay</button>
+                    </form>
+                </aside>
             </div>
         </div>
         <%- include("components/footer.html") %>
@@ -35,61 +68,9 @@
                 <script>
                     const main_content = document.querySelector(".cart-container");
                     const items = <%- JSON.stringify(mycart) %>;
-
-                    for(var item of items){
-                        const item_container = document.createElement("div");
-                        item_container.setAttribute("class", "mycart-item-container container-fluid");
-
-                        const image_container = document.createElement("div");
-                        image_container.setAttribute("class", "image-container");
-
-                        const item_image = document.createElement("img");
-                        item_image.setAttribute("class", "item-image");
-                        item_image.setAttribute("src", item.url);
-
-                        image_container.appendChild(item_image);
-                        item_container.appendChild(image_container);
-
-                        const info_container = document.createElement("div");
-                        info_container.setAttribute("class", "item-info-container");
-
-                        info_container.appendChild(createArticleField("name", "Name", item.name));
-                        info_container.appendChild(createArticleField("author", "Author", item.author));
-                        info_container.appendChild(createArticleField("price", "Price", item.price));
-                        info_container.appendChild(createArticleField("description", "Description", item.description));
-
-                        const buttons_container = document.createElement("div");
-                        buttons_container.setAttribute("class", "buttons-container container");
-
-                        const remove_button = document.createElement("button");
-                        remove_button.setAttribute("class", "remove-button");
-                        remove_button.innerHTML = "Remove";
-
-                        item_container.appendChild(info_container);
-
-                        main_content.appendChild(item_container);
-                        const br = document.createElement("br");
-                        main_content.appendChild(br);
-                    }
-
-                    function createArticleField(differ, key_name, value){
-                        const article_name_field = document.createElement("div");
-                        article_name_field.setAttribute("class", `article-${differ}-field article-field container`);
-                        const article_name_key = document.createElement("h6");
-                        article_name_key.setAttribute("class", `article-${differ}-key article-key h5`);
-                        article_name_key.innerHTML = key_name + ":&nbsp";
-
-                        article_name_field.appendChild(article_name_key);
-
-                        const article_name_value = document.createElement("p");
-                        article_name_value.setAttribute("class", `article-${differ}-value article-value p`);
-                        article_name_value.innerHTML = value;
-
-                        article_name_field.appendChild(article_name_value);
-
-                        return article_name_field;
-                    }
                 </script>
+                <script src="scripts/createCartElements.js"></script>
+                <script src="scripts/mycart-pay-form.js"></script>
             <% } %>
         <% } %>
     </body>

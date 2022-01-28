@@ -13,7 +13,11 @@
                 Article added to your cart!
             </div>
             <!--NAVBAR-->
-            <%- include("components/navbar.html") %>
+            <%- include("components/navbar.ejs") %>
+            <div id="black_background-window" class="emergent-windows-container container-fluid">
+                <%- include("components/newArticle.html") %>
+                <%- include("components/more_info.html") %>
+            </div>
 
             <!--MAIN CONTENT-->
             <button class="searchArticle-button">S</button>

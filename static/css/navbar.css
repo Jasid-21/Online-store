@@ -1,0 +1,19 @@
+.profile-user-container{
+    display: flex;
+}
+.profile-img-container{
+    width: 50px;
+    height: 50px;
+    border: 2px solid black;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.username-container{
+    display: flex;
+    align-items: center;
+}
+
+#logout{
+    border-top: 1px solid gray;
+}

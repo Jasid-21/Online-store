@@ -1,6 +1,7 @@
 body{
     margin: 0px;
     padding: 0px;
+    overflow: hidden;
 }
 
 #masterContainer{
@@ -9,6 +10,7 @@ body{
 }
 
 .mainContent-container{
+    margin-top: 20px;
     min-height: 50px;
     
     display: grid;
@@ -16,12 +18,32 @@ body{
 }
 
 .cart-container{
+    border: 2px dashed black;
     min-height: 50px;
+    max-height: 82vh;
+    padding: 20px;
+
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
-.info-container{
-    min-height: 50px;
-    border: 1px solid green;
+::-webkit-scrollbar{
+    border-radius: 7px;
+}
+
+::-webkit-scrollbar-track{
+    background-color: transparent;
+    border-radius: 7px;
+}
+
+::-webkit-scrollbar-thumb{
+    background-color: rgb(24, 141, 53);
+    border-radius: 7px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background-color: rgb(7, 95, 29);
+    cursor: pointer;
 }
 
 .payCart-button{
@@ -86,6 +108,17 @@ body{
 
 .article-value{
     font-size: 17px;
+}
+
+.remove-button{
+    background-color: lightgray;
+    border: 2px solid gray;
+    border-radius: 5px;
+    font-weight: 600;
+}
+
+.remove-button:hover{
+    background-color: gray;
 }
 
 @media(max-width: 640px){
