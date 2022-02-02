@@ -32,3 +32,10 @@ input.small_field{
 .pay-form-button:hover{
     background-color: rgb(26, 27, 27);
 }
+
+@media(max-width: 640px){
+    .info-container{
+        position: fixed;
+        display: none;
+    }
+}

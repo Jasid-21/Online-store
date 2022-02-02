@@ -1,13 +1,14 @@
 .emergent-windows-container{
-    height: 100vh;
+    min-height: 100vh;
     position: absolute;
     top: 0px;
 
     background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
 
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
 
     z-index: 1000;
     display: none;

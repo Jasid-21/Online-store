@@ -1,20 +1,42 @@
 const username_value = document.getElementById("username_value");
 const search_form = document.getElementById("search-form");
+const search_refresh = document.querySelector(".search-refresh");
 
 search_form.addEventListener('submit', function(e){
     e.preventDefault();
 
     const formData = new FormData(search_form);
     var http = new XMLHttpRequest();
+    http.open("POST", "/searchArticle");
     http.onreadystatechange = function(){
         if(http.readyState==4 && http.status==200){
-            alert("Done!");
+            var resp = http.responseText;
+            resp = JSON.parse(resp);
+
+            if(resp.status == 1){
+                if(resp.data.length > 0){
+                    main_content.innerHTML = "";
+                    createHomeElements(resp.data);
+                }else{
+                    alert("There are no items that match with this query  :(");
+                }
+            }else{
+                alert(resp.message);
+            }
         }else{
-            console.log(`readyState: ${http.readyState}`);
-            console.log(`status: ${http.status}`);
+            handle_pre_http(http);
         }
     }
     http.send(formData);
+});
+
+search_refresh.addEventListener('click', function(e){
+    e.preventDefault();
+
+    const inputs = search_form.querySelectorAll(".input-value");
+    for(var input of inputs){
+        input.value = "";
+    }
 });
 
 
@@ -32,6 +54,7 @@ function more_info(button){
             resp = JSON.parse(resp);
 
             if(resp.status == 1){
+                clear_black_window();
                 const article_info = resp.article_info;
                 console.log(article_info);
                 const info_displayer = document.getElementById("article-info-displayer");
@@ -58,8 +81,7 @@ function more_info(button){
                 alert(resp.message);
             }
         }else{
-            console.log(`readyState: ${http.readyState}`);
-            console.log(`status: ${http.status}`);
+            handle_pre_http(http);
         }
     }
     http.send(null);
@@ -75,17 +97,13 @@ function addToCart(button){
             resp = JSON.parse(resp);
 
             if(resp.status == 1){
-                const info_displayer = document.getElementById("article-info-displayer");
-                const home_black_window = document.getElementById("black_background-window");
-                info_displayer.style.display = "none";
-                home_black_window.style.display = "none";
+                clear_black_window();
                 makeVisible("my-done-message");
             }else{
                 alert(resp.message);
             }
         }else{
-            console.log(`readyState: ${http.readyState}`);
-            console.log(`status: ${http.status}`);
+            handle_pre_http(http);
         }
     }
     http.send(null);

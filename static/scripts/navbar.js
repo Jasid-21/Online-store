@@ -1,4 +1,6 @@
 const logout = document.getElementById("logout");
+const newArticle_link = document.getElementById("newArticle");
+const newArticle_form = document.getElementById("new_article-form");
 
 logout.addEventListener('click', function(e){
     e.preventDefault();
@@ -37,23 +39,12 @@ document.addEventListener('DOMContentLoaded', function(){
     }else{
         console.log("Session object not found...");
     }
+});
 
-    const black_window = document.getElementById("black_background-window");
-    const newArticle_link = document.getElementById("newArticle");
-    const newArticle_form = document.getElementById("new_article-form");
-    newArticle_link.addEventListener('click', function(e){
-        e.preventDefault();
+newArticle_link.addEventListener('click', function(e){
+    e.preventDefault();
 
-        black_window.style.display = "flex";
-        newArticle_form.style.display = "block";
-    });
-
-    const close_buttons = document.getElementsByClassName("close_button");
-    for(button of close_buttons){
-        button.addEventListener('click', function(e){
-            const parent = this.parentNode.parentNode;
-             parent.style.display = "none";
-             black_window.style.display = "none";
-        });
-    }
+    clear_black_window();
+    black_window.style.display = "flex";
+    newArticle_form.style.display = "block";
 });

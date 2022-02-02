@@ -1,0 +1,108 @@
+.searchArticle-module{
+    padding-top: 20px;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.search-form{
+    min-height: 300px;
+    padding: 10px;
+    border: 3px double black;
+    border-radius: 10px;
+}
+
+.search-form > div > input{
+    border-radius: 7px;
+}
+
+.search-submit{
+    width: 100%;
+    border-radius: 5px;
+    background-color: darkgreen;
+    border: 2px solid limegreen;
+    color: white;
+    font-weight: 700;
+    text-align: center;
+}
+
+.search-refresh{
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 5px;
+    background-color: gray;
+    border: 2px solid lightgray;
+    color: white;
+    font-weight: 700;
+    text-align: center;
+}
+
+@media(max-width: 960px){
+    .searchArticle-module{
+        grid-row: 1/2;
+        grid-column: 1/2;
+        padding: 0px;
+        min-height: auto;
+        height: auto;
+    }
+
+    .search-form{
+        min-height: auto;
+        width: 100%;
+        padding: 0px;
+        border-radius: 5px;
+
+        display: grid;
+        grid-template-columns: 0.6fr 0.3fr 0.3fr;
+        grid-template-rows: 0.2fr 0.2fr;
+    }
+
+    .input-field-container{
+        padding: 5px !important;
+        width: 50%;
+    }
+
+    .input-value{
+        width: 100%;
+    }
+
+    .search-form > br{
+        display: none;
+    }
+
+    .byuser-field-container{
+        grid-column: 1/2;
+        grid-row: 1/2;
+    }
+
+    .byname-field-container{
+        grid-column: 2/4;
+        grid-row: 1/2;
+    }
+
+    .byprice-field-container{
+        grid-column: 1/2;
+        grid-row: 2/3;
+    }
+
+    .search-input-key{
+        display: none;
+    }
+
+    .search-form > button{
+        height: 90%;
+    }
+
+    .search-submit{
+        font-size: 15px;
+        width: 70px;
+        justify-self: center;
+    }
+
+    .search-refresh{
+        width: 70px;
+        margin-top: 0px;
+        justify-self: center;
+    }
+}

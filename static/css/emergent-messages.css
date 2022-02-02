@@ -19,6 +19,7 @@
     position: absolute;
     margin: 0 40%;
     margin-top: 10px;
+    display: none;
 }
 
 .emergent-done{

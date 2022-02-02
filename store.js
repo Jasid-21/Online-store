@@ -40,39 +40,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/onlineStoreDb', function(error, db){
     }
 });
 
-//--------------------------------------ALL OF THIS IS FOR TESTING NEW KNOWLEDGES--------------
-app.get("/test", function(req, resp){
-    console.log("----------------------------");
-    //console.log(req.cookies.name);
-    console.log(req.cookies);
-    //console.log(req.session);
-    //console.log(req.session.id);
-    resp.send("Hello world!");
-});
-
-app.get("/testLogin", function(req, resp){
-    console.log("Testing testLogin...");
-    cookieName = "test_cookie2";
-    maxTime = new Date() + 9999;
-    resp.cookie(cookieName, "1234567", {maxAge: 9999});
-    console.log("Seting cookie...");
-    resp.send("I think you are logedIn...");
-    //resp.send({status: 1, sessionId: sessionId});
-})
-
-function checkCookie(req, resp, next){
-    const receivedCookie = req.session.id;
-    console.log(receivedCookie);
-    console.log(sessionId);
-
-    if(receivedCookie == sessionId){
-        next()
-    }else{
-        resp.send("bad credentials")
-    }
-}
-//-------------------------------------- HERE IS THE FINAL OF TESTING SECTION------------------
-
 
 //ROUTES.
 app.get("/login", function(req, resp){
@@ -215,6 +182,54 @@ app.get("/", validateSession, function(req, resp){
         resp.redirect("/login");
     }
 });
+
+app.post("/searchArticle", [validateSession, upload.single("")], function(req, resp){
+    const body = req.body;
+    console.log(body);
+
+    searchArticleBy(body.byUser, body.byName, null).then(function(response){
+        if(response){
+            console.log(response);
+            resp.send({status: 1, data: response});
+        }else{
+            resp.send({status: 0, message: "Article not found..."});
+        }
+    }).catch(function(error){
+        console.log(error);
+        resp.send({status: 0, message: "Erro trying to get articles..."});
+    });
+});
+
+async function searchArticleBy(user, name, price){
+    var byUser = new Array();
+    var byName = new Array();
+    var byPrice = new Array();
+    var total = new Array();
+    var temp = new Array();
+
+    if(user){
+        byUser = await models.Article.find({author: {'$regex': new RegExp(user, "i")}});
+        total = byUser;
+    }
+
+    if(name){
+        byName = await models.Article.find({name: {'$regex': new RegExp(name, "i")}});
+        if(byName && total){
+            for(var nameItem of byName){
+                for(var totalItem of total){
+                    if(nameItem.id == totalItem.id){
+                        temp.push(nameItem);
+                    }
+                }
+            }
+            total = temp;
+        }else{
+            total = byName;
+        }
+    }
+
+    return total;
+}
 
 app.get("/newArticle", validateSession, function(req, resp){
     resp.render("newArticle");

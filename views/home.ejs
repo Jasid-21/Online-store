@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <link rel="stylesheet" href="css/home.css">
+        <link rel="stylesheet" href="css/search-article-module.css">
         <%- include("components/header.html") %>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Online Store: Home</title>
@@ -20,7 +21,6 @@
             </div>
 
             <!--MAIN CONTENT-->
-            <button class="searchArticle-button">S</button>
             <div class="mainContent-container container-fluid">
                 <main class="main-content">
                     <% if(locals.errorMessage){ %>
@@ -37,19 +37,19 @@
                 </main>
                 <aside class="searchArticle-module">
                     <form id="search-form" class="search-form">
-                        <div class="input-field-container container">
-                            <p class="h6">By user:</p>
-                            <input type="text" name="byUser" id="" class="input-value">
+                        <div class="input-field-container byuser-field-container container">
+                            <p class="search-input-key h6">By user:</p>
+                            <input type="text" name="byUser" id="" class="input-value" placeholder="by user">
                         </div>
                         <br>
-                        <div class="input-field-container container">
-                            <p class="h6">By name:</p>
-                            <input type="text" name="byName" id="" class="input-value">
+                        <div class="input-field-container byname-field-container container">
+                            <p class="search-input-key h6">By name:</p>
+                            <input type="text" name="byName" id="" class="input-value" placeholder="by name">
                         </div>
                         <br>
-                        <div class="input-field-container container">
-                            <p class="h6">By price:</p>
-                            <input type="text" name="byPrice" id="" class="input-value">
+                        <div class="input-field-container byprice-field-container container">
+                            <p class="search-input-key h6">By price:</p>
+                            <input type="text" name="byPrice" id="" class="input-value" placeholder="by price">
                         </div>
                         <br>
                         <button id="search-submit" class="search-submit" type="submit">Search!</button>
@@ -64,12 +64,15 @@
             </div>
         </div>
         <%- include("components/footer.html") %>
+        <script src="scripts/search-article-button.js"></script>
+        <script src="scripts/createHomeArticles.js"></script>
         <% if(homeArticles.length > 0){ %>
             <script>
                 const main_content = document.querySelector(".main-content");
                 const items = <%- JSON.stringify(homeArticles) %>
+
+                createHomeElements(items);
             </script>
-            <script src="scripts/createHomeArticles.js"></script>
         <% } %>
         <script src="scripts/home.js"></script>
     </body>
