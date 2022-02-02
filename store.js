@@ -32,7 +32,8 @@ app.use(express_session({
     saveUninitialized: true
 }));
 
-mongoose.connect('mongodb://127.0.0.1:27017/onlineStoreDb', function(error, db){
+const db_url = process.env.DB_URL;
+mongoose.connect(db_url, function(error, db){
     if(error){
         console.log("Error trying to connect to mongo database: ", error);
     }else{
