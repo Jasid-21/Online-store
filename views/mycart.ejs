@@ -15,7 +15,6 @@
                 <%- include("components/newArticle.html") %>
             </div>
 
-            <button class="payCart-button">P</button>
             <div class="mainContent-container container-fluid">
                 <div class="cart-container container">
                     <% if(locals.errorMessage){ %>
@@ -31,20 +30,24 @@
                     <% } %>
                 </div>
                 <aside class="info-container container">
-                    <form id="pay-info-form">
+                    <form id="pay-info-form" class="pay-info-form">
                         <h3 class="form-title">
                             Payment methods.
                         </h3>
-                        <h6 style="text-align:center; font-size:13px;">
-                            Use the example values bellow:
+                        <h6 class="form-advice" style="text-align:center; font-size:13px;">
+                            Use the example values below:
                         </h6>
                         <hr>
-                        <div class="pay-form-field">
+
+
+
+
+                        <div class="pay-form-field large-field-container">
                             <label for="card_number" class="pay-field-key">Card number:</label>
                             <br>
                             <input class="pay-field-value" type="text" name="card_number" value="1234-4321-5678-8765" required>
                         </div>
-                        <div style="display:flex; justify-content:space-between;">
+                        <div class="small-fields-container" style="display:flex; justify-content:space-between;">
                             <div class="pay-form-field">
                                 <label for="expiration_date" class="pay-field-key">Exp.date:</label>
                                 <br>
