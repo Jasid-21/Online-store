@@ -343,14 +343,32 @@ app.post("/payCart", [validateSession, upload.single("")], function(req, resp){
     }
 
     if(cont === 3){
-        models.Cart.deleteMany({user_id: user_id}, function(error){
+        models.Cart.find({user_id: user_id}, function(error, data){
             if(error){
                 console.log(error);
-                resp.send({status: 0, message: "Error trying to pay your products..."});
+                resp.send({status: 0, message: "Error geting yur cart to pay..."});
             }else{
-                console.log("Payment applyed!");
-
-                resp.send({status: 1});
+                models.Cart.deleteMany({user_id: user_id}, function(error){
+                    if(error){
+                        console.log(error);
+                    }else{
+                        console.log("Payment applyed!");
+                    }
+                });
+                console.log("Data:");
+                console.log(data);
+                payCart(data).then(function(response){
+                    if(response == true){
+                        console.log("Your cart alredy have no items to pay!");
+                        resp.send({status: 1});
+                    }else{
+                        
+                        resp.send({status: 0, message: "Error pying your cart..."});
+                    }
+                }).catch(function(error){
+                    console.log(error);
+                    resp.send({status: 0, message: "Error pying your cart..."});
+                });
             }
         });
     }else{
@@ -363,6 +381,18 @@ app.post("/payCart", [validateSession, upload.single("")], function(req, resp){
 app.listen(app.get('port'), function(){
     console.log("Server listening in port: ", app.get('port'));
 });
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //FUNCTIONS.
@@ -441,4 +471,27 @@ async function getCartItems(user_id){
     }
 
     return articles;
+}
+
+async function payCart(items){
+    const item_cont = items.length;
+    var items_with_error = new Array();
+    var cont = 0;
+    for(var item of items){
+        try{
+            var delCount = await models.Article.deleteOne({_id: item.article_id});
+        }catch(error){
+            console.log(error);
+            cont = cont - 1;
+            items_with_error.push(item);
+        }
+        cont++;
+    }
+    if(cont == item_cont){
+        return true;
+    }else{
+        console.log("Showing items with error while trying to pay cart:");
+        console.log(items_with_error);
+        return false;
+    }
 }

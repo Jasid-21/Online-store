@@ -115,14 +115,8 @@ body{
 @media(max-width: 640px){
     .mainContent-container{
         grid-template-columns: 1fr;
-        grid-template-rows: 0.3fr 0.6fr;
+        grid-template-rows: 0.3fr 0.7fr;
         margin-top: 5px;
-    }
-
-    .main-content{
-        grid-row: 2/3;
-        grid-column: 1/2;
-        height: 100%;
     }
 
     .image-container{
