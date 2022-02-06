@@ -377,6 +377,20 @@ app.post("/payCart", [validateSession, upload.single("")], function(req, resp){
 });
 
 
+app.get("/myArticles", validateSession, function(req, resp){
+    const user_id = req.id;
+    models.Article.find({user_ID: user_id}, function(error, data){
+        if(error){
+            console.log(error);
+            resp.send({status: 0, message: "Error trying to get your articles..."});
+        }else{
+            console.log("Showing your articles:");
+            console.log(data);
+            resp.send({status: 1, data: data});
+        }
+    });
+});
+
 //FINAL.
 app.listen(app.get('port'), function(){
     console.log("Server listening in port: ", app.get('port'));

@@ -1,6 +1,7 @@
 const logout = document.getElementById("logout");
 const newArticle_link = document.getElementById("newArticle");
 const newArticle_form = document.getElementById("new_article-form");
+const myArticles = document.getElementById("myArticles");
 
 logout.addEventListener('click', function(e){
     e.preventDefault();
@@ -47,4 +48,27 @@ newArticle_link.addEventListener('click', function(e){
     clear_black_window();
     black_window.style.display = "flex";
     newArticle_form.style.display = "block";
+});
+
+myArticles.addEventListener('click', function(e){
+    e.preventDefault();
+
+    var http = new XMLHttpRequest();
+    http.open("GET", "/myArticles");
+    http.onreadystatechange = function(){
+        if(http.readyState==4 && http.status==200){
+            var resp = http.responseText;
+            resp = JSON.parse(resp);
+
+            if(resp.status == 1){
+                clear_black_window();
+                black_window.style.display = "flex";
+                document.querySelector(".myArticles-general-container").style.display = "block";
+                create_myArticle_items(resp.data);
+            }
+        }else{
+            handle_pre_http(http);
+        }
+    }
+    http.send(null);
 });
