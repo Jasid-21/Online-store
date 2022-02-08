@@ -1,6 +1,7 @@
 //GLOBAL VARIABLES AND LIBRARIES.
 const express = require('express');
 const express_session = require('express-session');
+const fs = require('fs');
 const mongoose = require("mongoose");
 const cookieParser = require('cookie-parser');
 
@@ -188,7 +189,7 @@ app.post("/searchArticle", [validateSession, upload.single("")], function(req, r
     const body = req.body;
     console.log(body);
 
-    searchArticleBy(body.byUser, body.byName, null).then(function(response){
+    searchArticleBy(body.byUser, body.byName, body.byPrice1, body.byPrice2).then(function(response){
         if(response){
             console.log(response);
             resp.send({status: 1, data: response});
@@ -200,37 +201,6 @@ app.post("/searchArticle", [validateSession, upload.single("")], function(req, r
         resp.send({status: 0, message: "Erro trying to get articles..."});
     });
 });
-
-async function searchArticleBy(user, name, price){
-    var byUser = new Array();
-    var byName = new Array();
-    var byPrice = new Array();
-    var total = new Array();
-    var temp = new Array();
-
-    if(user){
-        byUser = await models.Article.find({author: {'$regex': new RegExp(user, "i")}});
-        total = byUser;
-    }
-
-    if(name){
-        byName = await models.Article.find({name: {'$regex': new RegExp(name, "i")}});
-        if(byName && total){
-            for(var nameItem of byName){
-                for(var totalItem of total){
-                    if(nameItem.id == totalItem.id){
-                        temp.push(nameItem);
-                    }
-                }
-            }
-            total = temp;
-        }else{
-            total = byName;
-        }
-    }
-
-    return total;
-}
 
 app.get("/newArticle", validateSession, function(req, resp){
     resp.render("newArticle");
@@ -508,4 +478,53 @@ async function payCart(items){
         console.log(items_with_error);
         return false;
     }
+}
+
+async function searchArticleBy(user, name, lPrice, hPrice){
+    var byUser = new Array();
+    var byName = new Array();
+    var total = new Array();
+    var temp = new Array();
+
+    const low = Number(lPrice);
+    const high = Number(hPrice);
+
+    if(user){
+        byUser = await models.Article.find({author: {'$regex': new RegExp(user, "i")}});
+        total = byUser;
+    }
+
+    if(name){
+        byName = await models.Article.find({name: {'$regex': new RegExp(name, "i")}});
+        if(byName && total){
+            for(var nameItem of byName){
+                for(var totalItem of total){
+                    if(nameItem.id == totalItem.id){
+                        temp.push(nameItem);
+                    }
+                }
+            }
+            total = temp;
+        }else{
+            total = byName;
+        }
+    }
+
+    if(!user && !name){
+        total = await models.Article.find();
+    }
+
+    temp = [];
+    if(low && high){
+        for(var item of total){
+            var actualPrice = Number(item.price);
+
+            if(actualPrice >= low && actualPrice <= high){
+                temp.push(item);
+            }
+        }
+        total = temp;
+    }
+
+    return total;
 }

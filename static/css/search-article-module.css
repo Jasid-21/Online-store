@@ -13,7 +13,8 @@
     border-radius: 10px;
 }
 
-.search-form > div > input{
+.input-value{
+    width: 100%;
     border-radius: 7px;
 }
 
@@ -36,6 +37,16 @@
     color: white;
     font-weight: 700;
     text-align: center;
+}
+
+.price-input-container{
+    width: 200px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.price-input{
+    width: 45%;
 }
 
 @media(max-width: 960px){
@@ -65,6 +76,10 @@
 
     .input-value{
         width: 100%;
+    }
+
+    .price-input{
+        width: 45%;
     }
 
     .search-form > br{

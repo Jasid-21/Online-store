@@ -10,9 +10,6 @@
 
     <body>
         <div id="masterContainer" class="container-fluid">
-            <div id="my-done-message" class="emergent-message emergent-done">
-                Article added to your cart!
-            </div>
             <!--NAVBAR-->
             <%- include("components/navbar.ejs") %>
             <div id="black_background-window" class="emergent-windows-container container-fluid">
@@ -40,17 +37,20 @@
                     <form id="search-form" class="search-form">
                         <div class="input-field-container byuser-field-container container">
                             <p class="search-input-key h6">By user:</p>
-                            <input type="text" name="byUser" id="" class="input-value" placeholder="by user">
+                            <input type="text" name="byUser" class="input-value" placeholder="by user">
                         </div>
                         <br>
                         <div class="input-field-container byname-field-container container">
                             <p class="search-input-key h6">By name:</p>
-                            <input type="text" name="byName" id="" class="input-value" placeholder="by name">
+                            <input type="text" name="byName" class="input-value" placeholder="by name">
                         </div>
                         <br>
                         <div class="input-field-container byprice-field-container container">
                             <p class="search-input-key h6">By price:</p>
-                            <input type="text" name="byPrice" id="" class="input-value" placeholder="by price">
+                            <div class="price-input-container">
+                                <input type="number" name="byPrice1" class="input-value price-input" placeholder="low price">
+                                <input type="number" name="byPrice2" class="input-value price-input" placeholder="hight price">
+                            </div>
                         </div>
                         <br>
                         <button id="search-submit" class="search-submit" type="submit">Search!</button>

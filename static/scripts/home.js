@@ -98,7 +98,7 @@ function addToCart(button){
 
             if(resp.status == 1){
                 clear_black_window();
-                makeVisible("my-done-message");
+                emergent_done("Article added to your cart!");
             }else{
                 alert(resp.message);
             }
