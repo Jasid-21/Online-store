@@ -1,7 +1,6 @@
 //GLOBAL VARIABLES AND LIBRARIES.
 const express = require('express');
 const express_session = require('express-session');
-const fs = require('fs');
 const mongoose = require("mongoose");
 const cookieParser = require('cookie-parser');
 

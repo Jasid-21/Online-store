@@ -4,7 +4,8 @@
   "description": "",
   "main": "store.js",
   "scripts": {
-    "dev": "nodemon store.js"
+    "dev": "nodemon store.js",
+    "start": "node store.js"
   },
   "keywords": [],
   "author": "",
