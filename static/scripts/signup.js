@@ -12,7 +12,6 @@ form.addEventListener('submit', function(e){
             response = JSON.parse(response);
 
             if(response.status == 1){
-                alert("signUp: Done!")
                 localStorage.setItem("STR_session_object", JSON.stringify(response.session));
                 window.location.replace("/");
             }else{

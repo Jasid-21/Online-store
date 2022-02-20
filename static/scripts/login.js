@@ -25,7 +25,7 @@ loginForm.addEventListener('submit', function(e){
                 }));
                 window.location.replace("/");
             }else{
-                console.log(response.message);
+                alert(response.message);
             }
         }else{
             console.log(`readyState: ${http.readyState}`);
