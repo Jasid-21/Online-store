@@ -1,9 +1,8 @@
 //GLOBAL VARIABLES AND LIBRARIES.
 const express = require('express');
-const express_session = require('express-session');
 const mongoose = require("mongoose");
 const cookieParser = require('cookie-parser');
-
+const bcrypt = require('bcrypt');
 const mimetypes = require('mime-types');
 const multer = require('multer');
 const storage = multer.diskStorage({
@@ -26,11 +25,6 @@ app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'ejs');
 app.use(express.static('static'));
 app.use(cookieParser());
-app.use(express_session({
-    secret: "secret_key",
-    resave: false,
-    saveUninitialized: true
-}));
 
 const db_url = process.env.DB_URL;
 mongoose.connect(db_url, function(error, db){
@@ -53,35 +47,41 @@ app.post("/login", upload.single(""), function(req, resp){
 
     getUserByName(username, false).then(function(response){
         if(response){
-            if(password == response.password){
-                console.log("Authenticating...");
-                const sessionId = createToken(30);
-                const username = response.username;
-                const user_id = response.id;
-                const sessionObject = new models.Session({
-                    session_id: sessionId,
-                    user_id: response.id,
-                    username: response.username
-                });
+            bcrypt.compare(password, response.password, function(error, answ){
+                if(error){
+                    console.log(error);
+                    resp.send({status: 0, message: "Error trying to login. Please try later..."});
+                }else{
+                    if(answ == true){
+                        const sessionId = createToken(30);
+                        const username = response.username;
+                        const user_id = response.id;
+                        const sessionObject = new models.Session({
+                            session_id: sessionId,
+                            user_id: response.id,
+                            username: response.username
+                        });
 
-                sessionObject.save().then(function(){
-                    console.log("New session saved...");
-                    resp.send({
-                        status: 1,
-                        username: username,
-                        cookieName: "session_cookie",
-                        cookieValue: sessionId,
-                        cookieTime: new Date(2025, 0, 1).toUTCString(),
-                        user_id: user_id
-                    });
-                }).catch(function(error){
-                    console.log("Error trying to save session object: ", error);
-                    resp.send({status: 0, message: "Error trying to save new session object..."});
-                })
-            }else{
-                console.log("User or password doesn't match.");
-                resp.send({status: 0, message: "Incorrect user or password."});
-            }
+                        sessionObject.save().then(function(){
+                            console.log("New session saved...");
+                            resp.send({
+                                status: 1,
+                                username: username,
+                                cookieName: "session_cookie",
+                                cookieValue: sessionId,
+                                cookieTime: new Date(2025, 0, 1).toUTCString(),
+                                user_id: user_id
+                            });
+                        }).catch(function(error){
+                            console.log("Error trying to save session object: ", error);
+                            resp.send({status: 0, message: "Error trying to save new session object..."});
+                        });
+                    }else{
+                        console.log("Username or password doesn't match.");
+                        resp.send({status: 0, message: "Incorrect user or password."});
+                    }
+                }
+            });
         }else{
             resp.send({status: 0, message: "Username not found..."});
         }
@@ -106,28 +106,34 @@ app.post("/signup", upload.single(""), function(req, resp){
                 console.log("User found...");
                 resp.send({"status": 0, "message": "This user alredy exist..."});
             }else{
-                console.log("User doesn't exist!");
-                const objectToSend = new models.User({
-                    username: username,
-                    password: password1
-                });
-                objectToSend.save().then(function(user){
-                    const firstSession = new models.Session({
-                        session_id: req.session.id,
-                        user_id: user.id,
-                        username: username
-                    });
-
-                    firstSession.save().then(function(){
-                        console.log("Session saved successfully...");
-                        resp.send({status: 1, session: firstSession});
-                    }).catch(function(error){
-                        console.log("Error savein the first session: ", error);
-                        resp.send({status: 0, message: "Error saving the first session..."});
-                    });
-                }).catch(function(error){
-                    console.log("Error trying to save the new User: ", error);
-                    resp.send({status: 0, message: "Error trying to save new user..."});
+                bcrypt.hash(password1, 10, function(error, hash){
+                    if(error){
+                        console.log(error);
+                        resp.send({status: 0, message: "Error trying to create user. Please, try later..."});
+                    }else{
+                        const objectToSend = new models.User({
+                            username: username,
+                            password: hash
+                        });
+                        objectToSend.save().then(function(user){
+                            const firstSession = new models.Session({
+                                session_id: req.session.id,
+                                user_id: user.id,
+                                username: username
+                            });
+        
+                            firstSession.save().then(function(){
+                                console.log("Session saved successfully...");
+                                resp.send({status: 1, session: firstSession});
+                            }).catch(function(error){
+                                console.log("Error savein the first session: ", error);
+                                resp.send({status: 0, message: "Error saving the first session..."});
+                            });
+                        }).catch(function(error){
+                            console.log("Error trying to save the new User: ", error);
+                            resp.send({status: 0, message: "Error trying to save new user..."});
+                        });
+                    }
                 });
             }
         }).catch(function(error){
