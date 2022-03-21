@@ -7,14 +7,12 @@ body{
 
 #masterContainer{
     padding: 0px;
-    position: relative;
 }
 
 
 .mainContent-container{
-    bottom: 0px;
-    margin-top: 20px;
-    padding: 0px;
+    height: 100vh;
+    padding-top: 15vh;
     display: grid;
 
     grid-template-columns: 3fr 1fr;
@@ -62,6 +60,11 @@ body{
     justify-content: center;
 }
 
+
+
+
+
+
 .article-item-container{
     width: 180px;
     height: 220px;
@@ -91,8 +94,10 @@ body{
 
 .item-title{
     min-height: 20%;
+    max-height: 25%;
     text-align: center;
     border-bottom: 1px solid gray;
+    overflow: hidden;
 
     margin-bottom: 0px;
 }
@@ -137,6 +142,11 @@ body{
     color: white;
 }
 
+
+
+
+
+
 @media(max-width: 1130px){
     .article-item-container{
         width: 140px;
@@ -147,8 +157,7 @@ body{
 @media(max-width: 960px){
     .mainContent-container{
         grid-template-columns: 1fr;
-        grid-template-rows: 0.2fr 1fr;
-        margin-top: 5px;
+        grid-template-rows: 15vh 68vh;
     }
 
     .main-content{

@@ -70,8 +70,9 @@
         <% if(homeArticles.length > 0){ %>
             <script>
                 const main_content = document.querySelector(".main-content");
-                const items = <%- JSON.stringify(homeArticles) %>
-
+                const items = <%- homeArticles %>
+                console.log(items);
+                console.log(items.length);
                 createHomeElements(items);
             </script>
         <% } %>

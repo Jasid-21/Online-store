@@ -2,6 +2,8 @@
 const express = require('express');
 const mongoose = require("mongoose");
 const cookieParser = require('cookie-parser');
+const fs = require('fs');
+const path = require('path');
 const bcrypt = require('bcrypt');
 const mimetypes = require('mime-types');
 const multer = require('multer');
@@ -166,28 +168,15 @@ app.get("/logout", function(req, resp){
 });
 
 app.get("/", validateSession, function(req, resp){
-    const session_id = req.cookies.session_cookie;
-    if(session_id){
-        models.Session.findOne({session_id: session_id}, function(error, data){
-            if(error){
-                console.log("Error trying to get data for the session: ", error);
-                resp.send({status: 0, message: "Error trying to get data for this session..."});
-            }else{
-                const userId = data.user_id;
-                getHomeArticles(userId).then(function(response){
-                    console.log("Showing response:");
-                    console.log(response);
-                    resp.render("home", {homeArticles: response});
-                }).catch(function(error){
-                    console.log(error);
-                    resp.render("home", {errorMessage: "Error trying to get inital home articles  :("});
-                });
-            }
-        });
-    }else{
-        console.log("Redirecting...");
-        resp.redirect("/login");
-    }
+    const userId = req.id;
+    getHomeArticles(userId).then(function(response){
+        console.log("Showing response:");
+        console.log(response);
+        resp.render("home", {homeArticles: response});
+    }).catch(function(error){
+        console.log(error);
+        resp.render("home", {errorMessage: "Error trying to get inital home articles  :("});
+    });
 });
 
 app.post("/searchArticle", [validateSession, upload.single("")], function(req, resp){
@@ -428,26 +417,10 @@ async function validateSession(req, resp, next){
     }
 }
 
-async function getHomeArticles(user_id){
-    const friends = await models.Friend.find({user1: user_id});
-    console.log(friends);
-    var friends_items = new Array();
-
-    if(friends){
-        for(var friend of friends){
-            const items = await models.Article.find({user_ID: friend.user2});
-            for(var item of items){
-                friends_items.push(item);
-            }
-        }
-    }
-
-    var items = await models.Article.find().limit(initialPostsNum - friends_items.length);
-    for(var item of items){
-        friends_items.push(item);
-    }
-
-    return friends_items;
+async function getHomeArticles(){
+    const file_path = path.join(__dirname, "static", "fake-info", "MOCK_DATA.json");
+    var json_file = fs.readFileSync(file_path, 'utf-8');
+    return json_file;
 }
 
 async function getCartItems(user_id){
