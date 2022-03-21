@@ -117,7 +117,7 @@ app.post("/signup", upload.single(""), function(req, resp){
                         });
                         objectToSend.save().then(function(user){
                             const firstSession = new models.Session({
-                                session_id: req.session.id,
+                                session_id: createToken(30),
                                 user_id: user.id,
                                 username: username
                             });
