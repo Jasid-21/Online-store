@@ -170,8 +170,6 @@ app.get("/logout", function(req, resp){
 app.get("/", validateSession, function(req, resp){
     const userId = req.id;
     getHomeArticles(userId).then(function(response){
-        console.log("Showing response:");
-        console.log(response);
         resp.render("home", {homeArticles: response});
     }).catch(function(error){
         console.log(error);
@@ -185,14 +183,13 @@ app.post("/searchArticle", [validateSession, upload.single("")], function(req, r
 
     searchArticleBy(body.byUser, body.byName, body.byPrice1, body.byPrice2).then(function(response){
         if(response){
-            console.log(response);
             resp.send({status: 1, data: response});
         }else{
             resp.send({status: 0, message: "Article not found..."});
         }
     }).catch(function(error){
         console.log(error);
-        resp.send({status: 0, message: "Erro trying to get articles..."});
+        resp.send({status: 0, message: "Error trying to get articles..."});
     });
 });
 
@@ -319,8 +316,6 @@ app.post("/payCart", [validateSession, upload.single("")], function(req, resp){
                         console.log("Payment applyed!");
                     }
                 });
-                console.log("Data:");
-                console.log(data);
                 payCart(data).then(function(response){
                     if(response == true){
                         console.log("Your cart alredy have no items to pay!");
@@ -426,9 +421,11 @@ async function getHomeArticles(){
 async function getCartItems(user_id){
     var articles = new Array();
     const articleIds = await models.Cart.find({user_id: user_id});
-
+    console.log("article_ids:");
+    console.log(articleIds);
     for(var id of articleIds){
         const article = await models.Article.findById(id.article_id);
+        console.log("linea 427");
         articles.push(article);
     }
 
@@ -459,6 +456,56 @@ async function payCart(items){
 }
 
 async function searchArticleBy(user, name, lPrice, hPrice){
+    var json_name = new Array();
+    var json_user = new Array();
+    var json_total = new Array();
+    var data = fs.readFileSync(path.join(__dirname, 'static', 'fake-info', 'MOCK_DATA.json'), 'utf-8');
+    if(data){
+        data = JSON.parse(data);
+        var cancel = false;
+        if(name){
+            for(var item of data){
+                if(item.name.includes(name)){
+                    json_name.push(item);
+                }
+            }
+            if(json_name.length <= 0){
+                cancel = true;
+            }
+        }
+
+        if(user && !cancel){
+            for(var item of data){
+                if(item.user.includes(user)){
+                    json_user.push(item);
+                }
+            }
+        }
+
+        if(!cancel){
+            var temp = new Array();
+            if(name){
+                for(var item of json_name){
+                    json_total.push(item);
+                }
+            }
+
+            if(user){
+                for(var item of json_user){
+                    for(var total of json_total){
+                        if(item._id == total._id){
+                            temp.push(item);
+                            break;
+                        }
+                    }
+                }
+                json_total = temp;
+            }
+            temp = [];
+        }
+    }
+
+
     var byUser = new Array();
     var byName = new Array();
     var total = new Array();
@@ -493,6 +540,10 @@ async function searchArticleBy(user, name, lPrice, hPrice){
     }
 
     temp = [];
+    for(var item of json_total){
+        total.push(item);
+    }
+    
     if(low && high){
         for(var item of total){
             var actualPrice = Number(item.price);
