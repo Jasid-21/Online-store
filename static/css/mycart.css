@@ -7,6 +7,7 @@ body{
 #masterContainer{
     margin: 0px;
     padding: 0px;
+    padding-top: 100px;
 }
 
 .mainContent-container{
@@ -115,7 +116,7 @@ body{
 @media(max-width: 640px){
     .mainContent-container{
         grid-template-columns: 1fr;
-        grid-template-rows: 0.3fr 0.7fr;
+        grid-template-rows: 30vh 70vh;
         margin-top: 5px;
     }
 

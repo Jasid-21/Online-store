@@ -17,6 +17,7 @@ const upload = multer({
     storage: storage
 });
 const models = require('./schemas.js');
+const { json } = require('express');
 const initialPostsNum = 4;
 
 const app = express();
@@ -36,6 +37,9 @@ mongoose.connect(db_url, function(error, db){
         console.log("Connection created successfully...");
     }
 });
+var json_articles = fs.readFileSync(path.join(__dirname, 'static', 'fake-info', 'MOCK_DATA.json'), 'utf-8');
+json_articles = JSON.parse(json_articles);
+console.log(json_articles.length);
 
 
 //ROUTES.
@@ -239,6 +243,7 @@ app.get("/moreInfo", validateSession, function(req, resp){
 
 app.get("/mycart", validateSession, function(req, resp){
     const user_id = req.id;
+    console.log("Entering to mycart");
     getCartItems(user_id).then(function(data){
         console.log(data);
         resp.render("mycart", {mycart: data});
@@ -350,6 +355,7 @@ app.get("/myArticles", validateSession, function(req, resp){
     });
 });
 
+
 //FINAL.
 app.listen(app.get('port'), function(){
     console.log("Server listening in port: ", app.get('port'));
@@ -424,9 +430,18 @@ async function getCartItems(user_id){
     console.log("article_ids:");
     console.log(articleIds);
     for(var id of articleIds){
-        const article = await models.Article.findById(id.article_id);
-        console.log("linea 427");
-        articles.push(article);
+        if(id.article_id.length >= 12){
+            const article = await models.Article.findById(id.article_id);
+            console.log("linea 427");
+            articles.push(article);
+        }else{
+            for(var item of json_articles){
+                if(item._id == id.article_id){
+                    articles.push(item);
+                    break;
+                }
+            }
+        }
     }
 
     return articles;
@@ -437,12 +452,22 @@ async function payCart(items){
     var items_with_error = new Array();
     var cont = 0;
     for(var item of items){
-        try{
-            var delCount = await models.Article.deleteOne({_id: item.article_id});
-        }catch(error){
-            console.log(error);
-            cont = cont - 1;
-            items_with_error.push(item);
+        if(item.article_id.length >= 12){
+            try{
+                await models.Article.deleteOne({_id: item.article_id});
+            }catch(error){
+                console.log(error);
+                cont = cont - 1;
+                items_with_error.push(item);
+            }
+        }else{
+            for(var i=0; i<json_articles.length; i++){
+                const json = json_articles[i];
+                if(json._id == item.article_id){
+                    json_articles.splice(i, 1);
+                    break;
+                }
+            }
         }
         cont++;
     }
